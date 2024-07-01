@@ -17,8 +17,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import FormError from '@/components/form-error';
 import FormSuccess from '@/components/form-success';
-import { login } from '@/actions/login';
 import { useState, useTransition } from 'react';
+import { register } from '@/actions/register';
 
 const RegisterForm = () => {
     const [error, setError] = useState<string | undefined>('');
@@ -38,7 +38,12 @@ const RegisterForm = () => {
         setError('');
         setSuccess('');
 
-        console.log(values);
+        startTransition(() => {
+            register(values).then(data => {
+                setError(data.error);
+                setSuccess(data.success);
+            });
+        });
     };
 
     return (
@@ -54,7 +59,7 @@ const RegisterForm = () => {
                     className="space-y-6"
                 >
                     <div className="space-y-4">
-                        <FormField
+                    <FormField
                             control={form.control}
                             name="name"
                             render={({ field }) => (
