@@ -17,8 +17,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import FormError from '@/components/form-error';
 import FormSuccess from '@/components/form-success';
+import { login } from '@/actions/login';
+import { useState, useTransition } from 'react';
 
 const LoginForm = () => {
+    const [error, setError] = useState<string | undefined>('');
+    const [success, setSuccess] = useState<string | undefined>('');
+    const [isPending, startTransition] = useTransition();
+
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -28,7 +34,15 @@ const LoginForm = () => {
     });
 
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        console.log(values);
+        setError('');
+        setSuccess('');
+
+        startTransition(() => {
+            login(values).then(data => {
+                setError(data.error);
+                setSuccess(data.success);
+            });
+        });
     };
 
     return (
@@ -53,6 +67,7 @@ const LoginForm = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={isPending}
                                             placeholder="fabio@exemplo.com"
                                         />
                                     </FormControl>
@@ -71,6 +86,7 @@ const LoginForm = () => {
                                             {...field}
                                             type="password"
                                             placeholder="******"
+                                            disabled={isPending}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -78,9 +94,13 @@ const LoginForm = () => {
                             )}
                         />
                     </div>
-                    <FormError message='' />
-                    <FormSuccess message=''/>
-                    <Button type="submit" className="w-full">
+                    <FormError message={error} />
+                    <FormSuccess message={success} />
+                    <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={isPending}
+                    >
                         Entrar
                     </Button>
                 </form>
