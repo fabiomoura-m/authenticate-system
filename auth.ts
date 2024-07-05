@@ -4,9 +4,10 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { db } from '@/lib/db';
 import authConfig from '@/auth.config';
 import { getUserById } from '@/data/user';
+import { getToFactorConfirmationByUserId } from './data/two-factor-confirmation';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    pages:{
+    pages: {
         signIn: '/auth/login',
         error: '/auth/error'
     },
@@ -19,17 +20,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
     },
     callbacks: {
-        async signIn({user, account}){
+        async signIn({ user, account }) {
             // Allow OAuth without email verification
-            if(account?.provider !== 'credentials') return true
+            if (account?.provider !== 'credentials') return true;
 
-            const existingUser = await getUserById(user.id as string)
+            const existingUser = await getUserById(user.id as string);
 
             // Prevent sign in without email verification
-            if(!existingUser?.emailVerified) return false
+            if (!existingUser?.emailVerified) return false;
 
-            return true
+            if (existingUser.isTwoFactorEnable) {
+                const twoFactorConfirmation =
+                    await getToFactorConfirmationByUserId(existingUser.id);
 
+                if(!twoFactorConfirmation) return false
+
+                // Delete two factor confirmation for next sign in
+                await db.twoFactorConfirmation.delete({
+                    where: {id: twoFactorConfirmation.id}
+                })
+            }
+
+            return true;
         },
         async session({ token, session }) {
             if (token.sub && session.user) {

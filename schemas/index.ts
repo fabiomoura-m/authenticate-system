@@ -18,7 +18,12 @@ export const LoginSchema = z.object({
     }),
     password: z.string().min(1, {
         message: 'É necessário uma senha'
-    })
+    }),
+    code: z.string().optional()
+});
+
+export const LoginSchemaWithCode = LoginSchema.extend({
+    code: z.string().min(1, { message: 'Digite o código recebido no e-mail' })
 });
 
 export const RegisterSchema = z.object({

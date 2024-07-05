@@ -1,7 +1,7 @@
 'use client';
 
 import CardWrapper from '@/components/auth/card-wrapper';
-import { LoginSchema } from '@/schemas';
+import { LoginSchema, LoginSchemaWithCode } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -29,15 +29,17 @@ const LoginForm = () => {
             ? 'Email já utilizado por uma conta!'
             : '';
 
+    const [showToFactor, setShowToFactor] = useState(false);
     const [error, setError] = useState<string | undefined>('');
     const [success, setSuccess] = useState<string | undefined>('');
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
+        resolver: zodResolver(showToFactor ? LoginSchemaWithCode : LoginSchema),
         defaultValues: {
             email: '',
-            password: ''
+            password: '',
+            code: ''
         }
     });
 
@@ -46,11 +48,19 @@ const LoginForm = () => {
         setSuccess('');
 
         startTransition(() => {
-            login(values).then(data => {
-                setError(data?.error);
-                // TODO: add when we add 2FA
-                setSuccess(data?.success);
-            });
+            login(values)
+                .then(data => {
+                    if (data?.error) {
+                        setError(data?.error);
+                    }
+                    if (data?.success) {
+                        setSuccess(data?.success);
+                    }
+                    if (data?.twoFactor) {
+                        setShowToFactor(true);
+                    }
+                })
+                .catch(() => setError('Algo deu errado!'));
         });
     };
 
@@ -76,7 +86,8 @@ const LoginForm = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            disabled={isPending}
+                                            type="email"
+                                            disabled={isPending || showToFactor}
                                             placeholder="fabio@exemplo.com"
                                         />
                                     </FormControl>
@@ -95,7 +106,7 @@ const LoginForm = () => {
                                             {...field}
                                             type="password"
                                             placeholder="******"
-                                            disabled={isPending}
+                                            disabled={isPending || showToFactor}
                                         />
                                     </FormControl>
                                     <Button
@@ -112,6 +123,25 @@ const LoginForm = () => {
                                 </FormItem>
                             )}
                         />
+                        {showToFactor && (
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Código</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                disabled={isPending}
+                                                placeholder="123456"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                     </div>
                     <FormError message={error || urlError} />
                     <FormSuccess message={success} />
@@ -120,7 +150,7 @@ const LoginForm = () => {
                         className="w-full"
                         disabled={isPending}
                     >
-                        Entrar
+                        {showToFactor ? 'Confirmar' : 'Entrar'}
                     </Button>
                 </form>
             </Form>
