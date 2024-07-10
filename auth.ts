@@ -33,12 +33,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const twoFactorConfirmation =
                     await getToFactorConfirmationByUserId(existingUser.id);
 
-                if(!twoFactorConfirmation) return false
+                if (!twoFactorConfirmation) return false;
 
                 // Delete two factor confirmation for next sign in
                 await db.twoFactorConfirmation.delete({
-                    where: {id: twoFactorConfirmation.id}
-                })
+                    where: { id: twoFactorConfirmation.id }
+                });
             }
 
             return true;
@@ -52,6 +52,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.role = token.role;
             }
 
+            if (session.user) {
+                session.user.isTwoFactorEnable =
+                    token.isToFactorEnable as boolean;
+            }
+
             return session;
         },
         async jwt({ token }) {
@@ -62,6 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (!existingUser) return token;
 
             token.role = existingUser.role;
+            token.isTwoFactorEnable = existingUser.isTwoFactorEnable;
 
             return token;
         }
