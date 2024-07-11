@@ -28,7 +28,7 @@ const UserButton = () => {
                 <LogoutButton>
                     <DropdownMenuItem>
                         <ExitIcon className="h-4 w-4 mr-2" />
-                        Logout
+                        Sair
                     </DropdownMenuItem>
                 </LogoutButton>
             </DropdownMenuContent>

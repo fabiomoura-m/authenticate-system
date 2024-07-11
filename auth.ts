@@ -55,12 +55,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             if (session.user) {
                 session.user.isTwoFactorEnable =
-                    token.isToFactorEnable as boolean;
+                    token.isTwoFactorEnable as boolean;
                 session.user.name = token.name;
                 session.user.email = token.email as string;
                 session.user.isOauth = token.isOAuth as boolean;
             }
-
+    
             return session;
         },
         async jwt({ token }) {
