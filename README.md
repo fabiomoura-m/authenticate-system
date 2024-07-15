@@ -1,36 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Authenticate System
 
-## Getting Started
+Este é um sistema de autenticação simples, desenvolvido utilizando Next.js, Prisma, PostgreSQL, bcrypt, Tailwind CSS, shadcn e @auth0/nextjs-auth0. Ele permite a criação de novos usuários, login, autenticação de rotas protegidas e logout.
 
-First, run the development server:
+## Funcionalidades
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Registro de Usuário**: Permite que novos usuários se registrem no sistema.
+- **Login de Usuário**: Autenticação de usuários registrados.
+- **Proteção de Rotas**: Rotas protegidas por autenticação.
+- **Atualização de dados de Usuário**: Permite atualizar os dados do usuário cadastrado.
+- **Recuperação de senha**: Permite recuperar a senha pelo e-mail de cadastro.
+- **Autenticação 2FA**: Autenticação de 2 fatores, com envio de código por e-mail.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tecnologias Utilizadas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **Next.js**: Framework React para desenvolvimento full-stack.
+- **Prisma**: ORM (Object-Relational Mapping) para Node.js e TypeScript.
+- **PostgreSQL**: Banco de dados relacional.
+- **bcrypt**: Biblioteca para hashing de senhas.
+- **Tailwind CSS**: Framework de utilitários CSS para estilização.
+- **shadcn**: Biblioteca de componentes para UI.
+- **NextAuth.js v5**: Biblioteca para autenticação.
